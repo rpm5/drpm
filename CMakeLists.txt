@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 project(drpm)
 
+SET (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
+FIND_PACKAGE (Sanitizers)
+
 find_package(ZLIB REQUIRED)
 find_package(BZip2 REQUIRED)
 find_package(LibLZMA REQUIRED)

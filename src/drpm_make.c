@@ -32,9 +32,19 @@
 #include <sys/stat.h>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
+
+#ifdef	RPM5
+#include <rpmfi.h>
+#define	VERIFY_MD5	(1 << 0)
+#define	VERIFY_SIZE	(1 << 1)
+#define	RPMFC_ELF32	(1 <<  0)
+#define	RPMFC_ELF64	(1 <<  1)
+#else	/* RPM5 */
 #include <rpm/rpmfi.h>
 #include <rpm/rpmvf.h>
 #include <rpm/rpmfc.h>
+#endif	/* RPM5 */
+
 #include <linux/kdev_t.h>
 
 #define BUFFER_SIZE 4096

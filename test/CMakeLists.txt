@@ -1,3 +1,11 @@
+IF (RPM5)
+    MESSAGE (STATUS "Enabling RPM 5 support")
+    ADD_DEFINITIONS (-DRPM5)
+    FIND_PACKAGE (PkgConfig REQUIRED)
+    PKG_CHECK_MODULES (RPM REQUIRED rpm)
+    INCLUDE_DIRECTORIES (${RPM_INCLUDE_DIRS})
+ENDIF (RPM5)
+
 set(DRPM_TEST_SOURCES drpm_api_tests.c)
 foreach(sourcefile ${DRPM_SOURCES})
    list(APPEND DRPM_TEST_SOURCES "../src/${sourcefile}")
@@ -31,10 +39,17 @@ if (HAVE_LZLIB_DEVEL)
 endif()
 
 add_executable(drpm_api_tests ${DRPM_TEST_SOURCES})
+ADD_SANITIZERS(drpm_api_tests)
 
+IF (RPM5)
+set_source_files_properties(${DRPM_TEST_SOURCES} PROPERTIES
+   COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-parameter -Wno-unused-function -DHAVE_CONFIG_H -I${CMAKE_BINARY_DIR}"
+)
+ELSE (RPM5)
 set_source_files_properties(${DRPM_TEST_SOURCES} PROPERTIES
    COMPILE_FLAGS "-std=c99 -pedantic -Wall -Wextra -DHAVE_CONFIG_H -I${CMAKE_BINARY_DIR}"
 )
+ENDIF (RPM5)
 
 target_link_libraries(drpm_api_tests ${DRPM_LINK_LIBRARIES} ${CMOCKA_LIBRARIES})
 

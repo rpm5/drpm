@@ -25,7 +25,12 @@
 #include <stdint.h>
 #include <fcntl.h>
 #include <openssl/md5.h>
+
+#ifdef	RPM5
+#include <string.h>
+#else	/* RPM5 */
 #include <rpm/rpmlib.h>
+#endif	/* RPM5 */
 
 /* Wrapper for struct compstrm. Used to prepend uncompressed header. */
 struct compstrm_wrapper {

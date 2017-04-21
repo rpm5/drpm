@@ -1,3 +1,11 @@
+IF (RPM5)
+    MESSAGE (STATUS "Enabling RPM 5 support")
+    ADD_DEFINITIONS (-DRPM5)
+    FIND_PACKAGE (PkgConfig REQUIRED)
+    PKG_CHECK_MODULES (RPM REQUIRED rpm)
+    INCLUDE_DIRECTORIES (${RPM_INCLUDE_DIRS})
+ENDIF (RPM5)
+
 set(DRPM_VERSION_MAJOR 0)
 set(DRPM_VERSION_MINOR 2)
 set(DRPM_VERSION_PATCH 0)
@@ -13,11 +21,18 @@ endif()
 
 configure_file(config.h.in ${CMAKE_BINARY_DIR}/config.h)
 
-add_library(drpm SHARED ${DRPM_SOURCES})
+add_library(drpm STATIC ${DRPM_SOURCES})
+ADD_SANITIZERS(drpm)
 
+IF (RPM5)
+set_source_files_properties(${DRPM_SOURCES} PROPERTIES
+   COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-parameter -Wno-unused-function -DHAVE_CONFIG_H -I${CMAKE_BINARY_DIR}"
+)
+ELSE (RPM5)
 set_source_files_properties(${DRPM_SOURCES} PROPERTIES
    COMPILE_FLAGS "-std=c99 -pedantic -Wall -Wextra -DHAVE_CONFIG_H -I${CMAKE_BINARY_DIR}"
 )
+ENDIF (RPM5)
 
 target_link_libraries(drpm ${DRPM_LINK_LIBRARIES})
 
